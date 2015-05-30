@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	<servlet>
+		<servlet-name>PhotoSea</servlet-name>
+		<servlet-class>ua.com.PhotoSeaServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PhotoSea</servlet-name>
+		<url-pattern>/photosea</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>sign-in</servlet-name>
+		<servlet-class>ua.com.LoginForm</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>sign-in</servlet-name>
+		<url-pattern>/sign-in</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>sign-up</servlet-name>
+		<servlet-class>ua.com.RegisterForm</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>sign-up</servlet-name>
+		<url-pattern>/sign-up</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>foundlist</servlet-name>
+		<servlet-class>ua.com.FoundList</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>foundlist</servlet-name>
+		<url-pattern>/foundlist</url-pattern>
+	</servlet-mapping>
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
