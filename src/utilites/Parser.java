@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -122,11 +124,12 @@ public class Parser {
 	}
 
 	//returns ArrayList of all images URLs on the page
-	public ArrayList<String> getAllURLs(String code){
+	public ArrayList<String[]> getAllURLs(String code){
 		int lastIndex = 0;
 		int nextIndex = 0;
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String[]> list = new ArrayList<String[]>();
 		String findCode = "standard_resolution\":{\"url\":\"";
+		String findTimeCode = "\"created_time\":\"";
 		while(lastIndex!=-1){
 			lastIndex = code.indexOf(findCode);
 			if(lastIndex!=-1){
@@ -134,8 +137,13 @@ public class Parser {
 				nextIndex = newString.indexOf("\",\"");
 				String res=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
 				res = res.replace("\\", "");
-				list.add(res);
-				newString = code.substring(lastIndex+nextIndex);
+				lastIndex = newString.indexOf(findTimeCode);
+				newString = newString.substring(lastIndex);
+				nextIndex = newString.indexOf("\",\"");
+				String date = newString.substring(findTimeCode.length(), nextIndex);
+				String[] fin = {res, date};
+				list.add(fin);
+				newString = newString.substring(nextIndex);
 				code = String.copyValueOf(newString.toCharArray());
 			}
 		}
@@ -150,4 +158,12 @@ public class Parser {
 			download(s, newFolder);
 		}
 	}*/
+	
+	public String convertDate(String unicode){
+		long unixSeconds = Long.valueOf(unicode);
+		Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
+		SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy"); // the format of your date
+		String formattedDate = sdf.format(date);
+		return formattedDate;
+	}
 }

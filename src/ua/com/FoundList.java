@@ -12,14 +12,13 @@ import utilites.Util;
 public class FoundList extends HttpServlet {
 	private Util util = new Util();
 	
-	public void doGet(HttpServletRequest req, HttpServletResponse resp){
+	public void doPost(HttpServletRequest req, HttpServletResponse resp){
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out;
 		try {
 			out = resp.getWriter();
 			out.println(util.headWithTitle("photoSea"));
-			out.println(util.StatPart());
-			out.println(util.getSearchForm(false));
+			out.println(util.StaticPart());
 			String link = req.getParameter("link");
 			if (Util.isLink(link)){
 				try {

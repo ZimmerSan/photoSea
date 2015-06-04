@@ -16,7 +16,7 @@ public class RegisterForm extends HttpServlet{
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("Sign in"));
-		out.println(util.StatPart());
+		out.println(util.StaticPart());
 		out.println(util.getRegisterForm());
 		out.println("</center>");
 		out.println("</span>");
