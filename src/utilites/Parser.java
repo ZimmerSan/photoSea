@@ -20,26 +20,56 @@ public class Parser {
 		//download(imgURL);
 	}
 	
-	private String getAuthor(String code){
+	public String[] getAuthor(String code){
+		String[] res = new String[2];
 		int lastIndex = 0;
 		int nextIndex = 0;
-		String res = "";
+		String name = "";
 		String findCode = "\"owner\":{\"username\":\"";
 		lastIndex = code.indexOf(findCode);
 		if(lastIndex!=-1){
 			String newString = code.substring(lastIndex);
 			nextIndex = newString.indexOf("\",\"");
+			name=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
+		}
+		res[0]=name;
+		String findImg = "<meta property=\"og:image\" content=\"";
+		lastIndex = code.indexOf(findImg);
+		String img="";
+		if(lastIndex!=-1){
+			String newString = code.substring(lastIndex);
+			nextIndex = newString.indexOf("\" />");
+			img=code.substring(lastIndex+findImg.length(), lastIndex+nextIndex);
+		}
+		res[1] = img;
+		return res;
+	}
+	
+	private String getDate(String code){
+		int lastIndex = 0;
+		int nextIndex = 0;
+		String res = "";
+		String findCode = "\"date\":";
+		lastIndex = code.indexOf(findCode);
+		if(lastIndex!=-1){
+			String newString = code.substring(lastIndex);
+			nextIndex = newString.indexOf(",\"caption");
 			res=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
 		}
-		return res;
+		return convertDate(res);
 	}
 	
 	public Map imgInfo(String code){
 		Map<String, String> map = new HashMap<String, String>();
 		String imgURL = findSingleImageURL(code);
-		String author = getAuthor(code);
+		String[] temp = getAuthor(code);
+		String author = temp[0];
+		String authorImg = temp[1];
+		String date = getDate(code);
 		map.put("url", imgURL);
 		map.put("author", author);
+		map.put("date", date);
+		map.put("authorImg", authorImg);
 		return map;
 	}
 	
@@ -128,19 +158,19 @@ public class Parser {
 		int lastIndex = 0;
 		int nextIndex = 0;
 		ArrayList<String[]> list = new ArrayList<String[]>();
-		String findCode = "standard_resolution\":{\"url\":\"";
-		String findTimeCode = "\"created_time\":\"";
+		String findCode = "display_src\":\"";
+		String findTimeCode = "date\":";
 		while(lastIndex!=-1){
-			lastIndex = code.indexOf(findCode);
+			lastIndex = code.indexOf(findTimeCode);
 			if(lastIndex!=-1){
 				String newString = code.substring(lastIndex);
-				nextIndex = newString.indexOf("\",\"");
-				String res=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
-				res = res.replace("\\", "");
-				lastIndex = newString.indexOf(findTimeCode);
+				nextIndex = newString.indexOf(",\"is_video");
+				String date=code.substring(lastIndex+findTimeCode.length(), lastIndex+nextIndex);
+				lastIndex = newString.indexOf(findCode);
 				newString = newString.substring(lastIndex);
-				nextIndex = newString.indexOf("\",\"");
-				String date = newString.substring(findTimeCode.length(), nextIndex);
+				nextIndex = newString.indexOf("\"}");
+				String res = newString.substring(findCode.length(), nextIndex);
+				res = res.replace("\\", "");
 				String[] fin = {res, date};
 				list.add(fin);
 				newString = newString.substring(nextIndex);
@@ -160,10 +190,28 @@ public class Parser {
 	}*/
 	
 	public String convertDate(String unicode){
+		if(unicode.indexOf(".0")>0)
+			unicode=unicode.substring(0, unicode.indexOf(".0"));
 		long unixSeconds = Long.valueOf(unicode);
 		Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
 		SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy"); // the format of your date
 		String formattedDate = sdf.format(date);
 		return formattedDate;
+	}
+	
+	public String getUser(String url){
+		String findCode = "instagram.com/";
+		String newString = url.substring(url.indexOf(findCode)+findCode.length());
+		if(newString.indexOf("/")<0){
+			return newString;
+		} else 
+			return newString.substring(0, newString.indexOf("/"));
+	}
+	
+	public String getUserIcon(String user) throws IOException{
+		String url = "https://instagram.com/"+user;
+		String code = parse(url);
+		String userImg = getAuthor(code)[1];
+		return userImg;
 	}
 }

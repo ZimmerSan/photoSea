@@ -16,7 +16,7 @@ public class LoginForm extends HttpServlet{
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("Sign in"));
-		out.println(util.StaticPart());
+		out.println(util.StaticPart(false));
 		out.println(util.getLoginForm());
 		out.println("</center>");
 		out.println("</span>");

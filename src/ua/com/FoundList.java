@@ -2,7 +2,6 @@ package ua.com;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
 
 import javax.servlet.http.*;
 
@@ -12,29 +11,29 @@ import utilites.Util;
 public class FoundList extends HttpServlet {
 	private Util util = new Util();
 	
-	public void doPost(HttpServletRequest req, HttpServletResponse resp){
+	public void doGet(HttpServletRequest req, HttpServletResponse resp){
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out;
 		try {
 			out = resp.getWriter();
-			out.println(util.headWithTitle("photoSea"));
-			out.println(util.StaticPart());
-			String link = req.getParameter("link");
-			if (Util.isLink(link)){
+			out.println(util.headWithTitle("Profile photos"));
+			out.println(util.StaticPart(false));
+			String link = req.getParameter("user");
+			link=util.makeLink(link);
+			if (link.contains(".com/p/")){
+				resp.sendRedirect("image?img="+link);
+			} else {
 				try {
-					out.println(util.getFullList(link));
+					out.println(util.getFullList(util.makeUserLink(link)));
 				} catch (IOException e) {
 					out.println("<p>URL is not available</p>");
 				}
-			} else {
-				out.println("<p>URL is not available</p>");
 			}
 			out.println("</center>");
 			out.println("</span>");
 			out.println("</body>");
 			out.println("</html>");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

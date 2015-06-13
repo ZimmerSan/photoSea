@@ -9,7 +9,7 @@ import javax.servlet.http.*;
 import utilites.Util;
 
 @SuppressWarnings("serial")
-public class mailForm extends HttpServlet {
+public class MailForm extends HttpServlet {
 	private Util util = new Util();
 	private StringBuilder sb = new StringBuilder();
 	
@@ -18,9 +18,9 @@ public class mailForm extends HttpServlet {
 		
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out = resp.getWriter();
-		out.println(util.headWithTitle("photoSea"));
+		out.println(util.headWithTitle("Send mail"));
 		
-		out.println(util.StaticPart());
+		out.println(util.StaticPart(false));
 		out.println(util.getMailForm(req.getParameter("img")));
 		out.println("</center>");
 		out.println("</span>");

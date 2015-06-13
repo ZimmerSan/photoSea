@@ -15,8 +15,8 @@ public class RegisterForm extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
-		out.println(util.headWithTitle("Sign in"));
-		out.println(util.StaticPart());
+		out.println(util.headWithTitle("Sign up"));
+		out.println(util.StaticPart(false));
 		out.println(util.getRegisterForm());
 		out.println("</center>");
 		out.println("</span>");
