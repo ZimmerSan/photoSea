@@ -15,12 +15,15 @@ public class MailForm extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		
+		HttpSession session = req.getSession(true);
+		boolean loged = false;
+		if(session.getAttribute("loged")!=null)
+			loged = session.getAttribute("loged").equals("true");
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("Send mail"));
 		
-		out.println(util.StaticPart(false));
+		out.println(util.StaticPart(loged, false));
 		out.println(util.getMailForm(req.getParameter("img")));
 		out.println("</center>");
 		out.println("</span>");

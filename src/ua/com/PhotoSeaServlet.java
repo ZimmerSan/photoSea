@@ -14,11 +14,21 @@ public class PhotoSeaServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		HttpSession session = req.getSession(true);
+		
+		//remove later
+				session.setAttribute("loged", "true");
+				session.setAttribute("username", "zimmersan");
+				
+		boolean loged = false;
+		if(session.getAttribute("loged")!=null)
+			loged = session.getAttribute("loged").equals("true");
+		
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("photoSea"));
 		
-		out.println(util.getIndexStaticPart());
+		out.println(util.getIndexStaticPart(loged));
 		out.println(util.getSearchForm());
 
 		out.println("</center>");

@@ -33,13 +33,14 @@ public class Parser {
 			name=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
 		}
 		res[0]=name;
-		String findImg = "<meta property=\"og:image\" content=\"";
+		String findImg = "profile_pic_url\":\"";
 		lastIndex = code.indexOf(findImg);
 		String img="";
 		if(lastIndex!=-1){
 			String newString = code.substring(lastIndex);
-			nextIndex = newString.indexOf("\" />");
-			img=code.substring(lastIndex+findImg.length(), lastIndex+nextIndex);
+			String end = ".jpg";
+			nextIndex = newString.indexOf(end);
+			img=code.substring(lastIndex+findImg.length(), lastIndex+nextIndex+end.length());
 		}
 		res[1] = img;
 		return res;
@@ -53,10 +54,10 @@ public class Parser {
 		lastIndex = code.indexOf(findCode);
 		if(lastIndex!=-1){
 			String newString = code.substring(lastIndex);
-			nextIndex = newString.indexOf(",\"caption");
+			nextIndex = newString.indexOf(",\"is_video");
 			res=code.substring(lastIndex+findCode.length(), lastIndex+nextIndex);
 		}
-		return convertDate(res);
+		return res;
 	}
 	
 	public Map imgInfo(String code){

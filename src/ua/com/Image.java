@@ -17,16 +17,20 @@ public class Image extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		HttpSession session = req.getSession(true);
+		boolean loged = false;
+		if(session.getAttribute("loged")!=null)
+			loged = session.getAttribute("loged").equals("true");
 		
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("Photo view"));
 		
-		out.println(util.StaticPart(false));
+		out.println(util.StaticPart(loged, false));
 		if(req.getParameter("img")!=null)
-			out.println(util.getSinglePhoto(req.getParameter("img")));
+			out.println(util.getSinglePhoto(loged, req.getParameter("img")));
 		else {
-			out.println(util.getSinglePhoto(req.getParameter("photo"), parser.convertDate(req.getParameter("date")), req.getParameter("user"), req.getParameter("userImg")));
+			out.println(util.getSinglePhoto(loged, req.getParameter("photo"), req.getParameter("date"), req.getParameter("user"), req.getParameter("userImg")));
 		}
 		out.println("</center>");
 		out.println("</span>");

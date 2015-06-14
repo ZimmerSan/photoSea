@@ -12,19 +12,24 @@ public class FoundList extends HttpServlet {
 	private Util util = new Util();
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp){
+		HttpSession session = req.getSession(true);
+		boolean loged = false;
+		if(session.getAttribute("loged")!=null)
+			loged = session.getAttribute("loged").equals("true");
+		
 		resp.setContentType("text/html;charset=utf-8");
 		PrintWriter out;
 		try {
 			out = resp.getWriter();
 			out.println(util.headWithTitle("Profile photos"));
-			out.println(util.StaticPart(false));
+			out.println(util.StaticPart(loged, false));
 			String link = req.getParameter("user");
 			link=util.makeLink(link);
 			if (link.contains(".com/p/")){
 				resp.sendRedirect("image?img="+link);
 			} else {
 				try {
-					out.println(util.getFullList(util.makeUserLink(link)));
+					out.println(util.getFullList(loged, util.makeUserLink(link)));
 				} catch (IOException e) {
 					out.println("<p>URL is not available</p>");
 				}
