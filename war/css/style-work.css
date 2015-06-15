@@ -202,7 +202,7 @@ a:hover {
 }
 
 .img-tools {
-	z-index:9999;
+	z-index: 9999;
 	width: 40px;
 	position: absolute;
 	top: 40px;
@@ -354,7 +354,7 @@ input.send_btn:hover {
 	color: #fff;
 }
 
-.top-menu a {
+.top-menu a, .top_panel .username a {
 	color: #fff;
 }
 
@@ -363,7 +363,7 @@ input.send_btn:hover {
 	border-bottom: 4px solid #fe5722;
 }
 
-.top-menu li:hover a {
+.top-menu li:hover a, .top_panel .username a:hover {
 	color: #fe5722;
 }
 
@@ -453,7 +453,8 @@ input.sgnin {
 	padding: 5px 0;
 	height: 40px;
 	left: -30px;
-	bottom: -80px;
+	bottom: -85px;
+	height: 50px;
 }
 
 .login-form .gobtn:hover {
@@ -630,7 +631,7 @@ tr.saved .small-image {
 
 div.paginator {
 	margin-left: 10px;
-	padding:25px 0;
+	padding: 25px 0;
 }
 
 .paginator a, .profedit .sb {
@@ -759,7 +760,7 @@ tr.paginator {
 	position: absolute;
 	top: 60px;
 	left: 150px;
-	width:150px;
+	width: 150px;
 	text-align: left;
 }
 
@@ -780,4 +781,31 @@ tr.paginator {
 
 .result-single .instr div:first-child {
 	margin-left: 0px;
+}
+
+.profile {
+	position: relative;
+	text-align: left;
+	left: 0;
+	top: 0;
+	padding: 25px;
+}
+
+.profile img {
+	width: 150px;
+	border-radius: 50%;
+}
+
+.profile .un {
+	color: #36474f;
+	position: absolute;
+	font-size: 32px;
+	top: 35px;
+	left: 200px;
+}
+
+.top_panel .username{
+	position: absolute;
+	top: 25px;
+	left: 85px;
 }

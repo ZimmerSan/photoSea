@@ -15,6 +15,9 @@ public class RegisterForm extends HttpServlet{
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		HttpSession session = req.getSession(true);
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");
 		boolean loged = false;
 		if(session.getAttribute("loged")!=null)
 			loged = session.getAttribute("loged").equals("true");
@@ -22,7 +25,7 @@ public class RegisterForm extends HttpServlet{
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.println(util.headWithTitle("Sign up"));
-		out.println(util.StaticPart(loged, false));
+		out.println(util.StaticPart(username, loged, false));
 		out.println(util.getRegisterForm());
 		out.println("</center>");
 		out.println("</span>");

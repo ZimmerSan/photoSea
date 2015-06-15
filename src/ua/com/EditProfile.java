@@ -15,6 +15,9 @@ public class EditProfile extends HttpServlet{
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		HttpSession session = req.getSession(true);
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");
 		boolean loged = false;
 		if(session.getAttribute("loged")!=null)
 			loged = session.getAttribute("loged").equals("true");
@@ -24,7 +27,7 @@ public class EditProfile extends HttpServlet{
 		try {
 			out = resp.getWriter();
 			out.println(util.headWithTitle("Edit profile"));
-			out.println(util.StaticPart(loged, true));
+			out.println(util.StaticPart(username, loged, true));
 			out.println(util.getProfileEditor(session.getAttribute("username"), null));
 			out.println("</center>");
 			out.println("</span>");

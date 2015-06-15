@@ -13,6 +13,9 @@ public class FoundList extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp){
 		HttpSession session = req.getSession(true);
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");
 		boolean loged = false;
 		if(session.getAttribute("loged")!=null)
 			loged = session.getAttribute("loged").equals("true");
@@ -22,7 +25,7 @@ public class FoundList extends HttpServlet {
 		try {
 			out = resp.getWriter();
 			out.println(util.headWithTitle("Profile photos"));
-			out.println(util.StaticPart(loged, false));
+			out.println(util.StaticPart(username, loged, false));
 			String link = req.getParameter("user");
 			link=util.makeLink(link);
 			if (link.contains(".com/p/")){

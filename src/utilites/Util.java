@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -12,7 +14,8 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 
 public class Util {
-	private static DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+	private static DatastoreService datastore = DatastoreServiceFactory
+			.getDatastoreService();
 	private StringBuilder sb = new StringBuilder();
 	private Parser parser = new Parser();
 
@@ -30,7 +33,7 @@ public class Util {
 		return sb.toString();
 	}
 
-	public String StaticPart(boolean loged, boolean profile) {
+	public String StaticPart(String user, boolean loged, boolean profile) {
 		sb.delete(0, sb.toString().length());
 		sb.append("<body");
 		if (!profile)
@@ -39,6 +42,8 @@ public class Util {
 		sb.append("<span class='container'>\n");
 		sb.append("<center>\n");
 		sb.append("<div class='top_panel'>\n");
+		if(loged)
+			sb.append("<div class='username'><a href='saved'>"+user+"</a></div>\n");
 		sb.append("<div class='logo_short'>\n");
 		sb.append("<span class='top_logo'><a href='/photosea' style='color:#fff; opacity'><img src='https://dl.dropboxusercontent.com/s/6difuypys7lrf7t/whiteLogo.png?dl=0' style='height:30px; width:30px; margin-top:4px;'></a></span>\n");
 		sb.append("</div>\n");
@@ -49,16 +54,15 @@ public class Util {
 		sb.append("</form>\n");
 		sb.append("</div>\n");
 		sb.append("<ul class='top-menu'>\n");
-		if(loged){
+		if (loged) {
 			// log out
 		}
 		sb.append("<li><a href='#'>contacts</a></li>\n");
 		sb.append("<li><a href='#'>about service</a></li>\n");
-		if(loged){
+		if (loged) {
 			sb.append("<li><a href='saved'>my profile</a></li>\n");
 		} else
 			sb.append("<li><a href='sign-in'>sign in</a></li>\n");
-		sb.append("<li><a href='saved'>my profile</a></li>\n");
 		sb.append("</ul>\n");
 		sb.append("</div>\n");
 		return sb.toString();
@@ -70,12 +74,12 @@ public class Util {
 		sb.append("<center>\n");
 		sb.append("<div class='top_panel' style='background:none;'>\n");
 		sb.append("<ul class='top-menu index_top_menu'>\n");
-		if(loged){
+		if (loged) {
 			// log out
 		}
 		sb.append("<li><a href='#'>contacts</a></li>\n");
 		sb.append("<li><a href='#'>about service</a></li>\n");
-		if(loged){
+		if (loged) {
 			sb.append("<li><a href='saved'>my profile</a></li>\n");
 		} else
 			sb.append("<li><a href='sign-in'>sign in</a></li>\n");
@@ -171,41 +175,32 @@ public class Util {
 		return sb.toString();
 	}
 
-	/*public String singleImgInfo(String url) throws IOException {
-		Parser parser = new Parser();
-		String code = parser.parse(url);
-		String imgURL = parser.findSingleImageURL(code);
-
-		sb.delete(0, sb.toString().length());
-		sb.append("<div class='result'>\n");
-		sb.append("<table style='float:left;'>\n");
-		sb.append("<tbody style='position: relative;'>\n");
-		sb.append("<tr>\n");
-		sb.append("<td class='image'>\n");
-		sb.append("<img src='" + imgURL + "'/>\n");
-		sb.append("</td>\n");
-		sb.append("<td class='functions'>\n");
-		sb.append("<div class='img_description'>\n");
-		sb.append("<p>Posted by: <a href='#'>username</a></p>\n");
-		sb.append("<p>Date: dd.mm.yyyy</p>\n");
-		sb.append("</div>\n");
-		sb.append("<div class='img_functions'>\n");
-		sb.append("<ul>\n");
-		sb.append("<li>Dimensions:</li>\n");
-		sb.append("<li class='dimension'><a>612x612</a></li>\n");
-		sb.append("<li class='dimension'><a>320x320</a></li>\n");
-		sb.append("<li class='dimension'><a>150x150</a></li>\n");
-		sb.append("<li class='services'><a href='#'><img src='https://dl.dropboxusercontent.com/s/c5vdkdqm0mt8msl/mail.png?dl=0'></a></li>\n");
-		sb.append("<li class='services'><a href='#'><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png'></a></li>\n");
-		sb.append("</ul>\n");
-		sb.append("</div>\n");
-		sb.append("</td>\n");
-		sb.append("</tr>\n");
-		sb.append("</tbody>\n");
-		sb.append("</table>\n");
-		sb.append("</div>\n");
-		return sb.toString();
-	}*/
+	/*
+	 * public String singleImgInfo(String url) throws IOException { Parser
+	 * parser = new Parser(); String code = parser.parse(url); String imgURL =
+	 * parser.findSingleImageURL(code);
+	 * 
+	 * sb.delete(0, sb.toString().length());
+	 * sb.append("<div class='result'>\n");
+	 * sb.append("<table style='float:left;'>\n");
+	 * sb.append("<tbody style='position: relative;'>\n"); sb.append("<tr>\n");
+	 * sb.append("<td class='image'>\n"); sb.append("<img src='" + imgURL +
+	 * "'/>\n"); sb.append("</td>\n"); sb.append("<td class='functions'>\n");
+	 * sb.append("<div class='img_description'>\n");
+	 * sb.append("<p>Posted by: <a href='#'>username</a></p>\n");
+	 * sb.append("<p>Date: dd.mm.yyyy</p>\n"); sb.append("</div>\n");
+	 * sb.append("<div class='img_functions'>\n"); sb.append("<ul>\n");
+	 * sb.append("<li>Dimensions:</li>\n");
+	 * sb.append("<li class='dimension'><a>612x612</a></li>\n");
+	 * sb.append("<li class='dimension'><a>320x320</a></li>\n");
+	 * sb.append("<li class='dimension'><a>150x150</a></li>\n"); sb.append(
+	 * "<li class='services'><a href='#'><img src='https://dl.dropboxusercontent.com/s/c5vdkdqm0mt8msl/mail.png?dl=0'></a></li>\n"
+	 * ); sb.append(
+	 * "<li class='services'><a href='#'><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png'></a></li>\n"
+	 * ); sb.append("</ul>\n"); sb.append("</div>\n"); sb.append("</td>\n");
+	 * sb.append("</tr>\n"); sb.append("</tbody>\n"); sb.append("</table>\n");
+	 * sb.append("</div>\n"); return sb.toString(); }
+	 */
 
 	public String getFullList(boolean loged, String user) throws IOException {
 		String url = "https://instagram.com/" + user
@@ -217,8 +212,12 @@ public class Util {
 		int i = 0;
 		sb.delete(0, sb.toString().length());
 		sb.append("<div class='result-poly result-working'>\n");
-		sb.append("<p class='page_name'>Latest photos of <span class='prof'>"
-				+ user + "</span></p>\n");
+		sb.append("<div class='profile'>\n");
+		
+		sb.append("<img src='"+userImg+"'>\n");
+		sb.append("<p class='un'>" + user + "</p>\n");
+		sb.append("</div>\n");
+		
 		sb.append("<table style='width:100%;'>\n");
 		sb.append("<tbody style='position: relative;'>\n");
 		for (String[] img : URLs) {
@@ -228,9 +227,13 @@ public class Util {
 			sb.append("<td class='small-image'>\n");
 			sb.append("<div style='position:relative'>");
 			sb.append("<div class='img-tools'>");
-			String saver = "save?"+"lastPage=foundlist?user="+user+"&url="+img[0]+"&date="+img[1]+"&author="+user+"&authorImg="+userImg;
-			if(loged)
-				sb.append("<div class='tool'><a href='"+saver+"' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
+			String saver = "save?" + "lastPage=foundlist?user=" + user
+					+ "&url=" + img[0] + "&date=" + img[1] + "&author=" + user
+					+ "&authorImg=" + userImg;
+			if (loged)
+				sb.append("<div class='tool'><a href='"
+						+ saver
+						+ "' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
 			else
 				sb.append("<div class='tool'><a href='sign-in' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
 			sb.append("</div>");
@@ -263,9 +266,14 @@ public class Util {
 		sb.append("<img src='" + info.get("url") + "'/>\n");
 		sb.append("<div class='info'>\n");
 		sb.append("<div class='instr'>\n");
-		String saver = "save?"+"lastPage=image?img="+info.get("url")+"&url="+info.get("url")+"&date="+info.get("date")+"&author="+info.get("author")+"&authorImg="+info.get("authorImg");
-		if(loged)
-			sb.append("<div><a href='"+saver+"'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
+		String saver = "save?" + "lastPage=image?img=" + info.get("url")
+				+ "&url=" + info.get("url") + "&date=" + info.get("date")
+				+ "&author=" + info.get("author") + "&authorImg="
+				+ info.get("authorImg");
+		if (loged)
+			sb.append("<div><a href='"
+					+ saver
+					+ "'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
 		else
 			sb.append("<div><a href='sign-in'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
 		sb.append("<div><a href='mail?img="
@@ -277,26 +285,31 @@ public class Util {
 		sb.append("<img src='" + info.get("authorImg") + "'>\n");
 		sb.append("<a class='un' href='foundlist?user=" + info.get("author")
 				+ "'><p>" + info.get("author") + "</p></a>\n");
-		sb.append("<p class='pd'>" + parser.convertDate((String)info.get("date")) + "</p>\n");
+		sb.append("<p class='pd'>"
+				+ parser.convertDate((String) info.get("date")) + "</p>\n");
 		sb.append("</div>\n");
 		sb.append("</div>\n");
 		sb.append("</div>\n");
 		return sb.toString();
 	}
 
-	public String getSinglePhoto(boolean loged, String img, String date, String user,
-			String userImg) {
+	public String getSinglePhoto(boolean loged, String img, String date,
+			String user, String userImg) {
 		sb.delete(0, sb.length());
 		sb.append("<div class='result-single result-working'>\n");
 		sb.append("<img src='" + img + "'/>\n");
 		sb.append("<div class='info'>\n");
 		sb.append("<div class='instr'>\n");
-		// String lastPage = "lastPage=image%3Fphoto="+img+"%24date="+date+"%24user="+user+"%24userImg="+userImg;
-		String lastPage = "lastPage=foundlist?user="+user;
-		String saver = "save?"+lastPage+"&url="+img+"&date="+date+"&author="+user+"&authorImg="+userImg;
-		if(loged)
-			sb.append("<div><a href='"+saver+"'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
-		else 
+		// String lastPage =
+		// "lastPage=image%3Fphoto="+img+"%24date="+date+"%24user="+user+"%24userImg="+userImg;
+		String lastPage = "lastPage=foundlist?user=" + user;
+		String saver = "save?" + lastPage + "&url=" + img + "&date=" + date
+				+ "&author=" + user + "&authorImg=" + userImg;
+		if (loged)
+			sb.append("<div><a href='"
+					+ saver
+					+ "'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
+		else
 			sb.append("<div><a href='sign-in'><img src='https://dl.dropboxusercontent.com/s/37j9dsgajgf1jjp/save1.png?dl=0'></a></div>\n");
 		sb.append("<div><a href='mail?img="
 				+ img
@@ -340,12 +353,12 @@ public class Util {
 	}
 
 	public String getSavedPhotos(Object username) throws IOException {
-		
+
 		Query q = new Query("Image");
 		q.addSort("saved", SortDirection.DESCENDING);
-		q.addFilter("username", Query.FilterOperator.EQUAL, (String)username);
+		q.addFilter("username", Query.FilterOperator.EQUAL, (String) username);
 		PreparedQuery pq = datastore.prepare(q);
-		
+
 		int i = 0;
 
 		sb.delete(0, sb.length());
@@ -353,7 +366,8 @@ public class Util {
 		sb.append("<tbody>\n");
 		sb.append("<tr class='panel_top'>\n");
 		sb.append("<td class='panel panel_top'>\n");
-		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"+(String)username+"</span></div>\n");
+		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"
+				+ (String) username + "</span></div>\n");
 		sb.append("</td>\n");
 		sb.append("<td class='svdPhotos svd_top'>\n");
 		sb.append("<p style='font-size:22px; color:#36474f; margin:0; margin-left:10px; '>Saved photos</p>\n");
@@ -376,7 +390,8 @@ public class Util {
 			}
 			String url = (String) result.getProperty("url");
 			sb.append("<td class='small-image'><span><center>\n");
-			sb.append("<a href='view?img=" + url + "'><img src='" + url	+ "'/></a>\n");
+			sb.append("<a href='view?img=" + url + "'><img src='" + url
+					+ "'/></a>\n");
 			sb.append("</center></span></td>\n");
 			// sb.append("<div class='tool'><a href='' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
 			if (i % 5 == 4) {
@@ -384,9 +399,9 @@ public class Util {
 			}
 			i++;
 		}
-		if(sb.lastIndexOf("</tr>\n")<sb.length()-10)
+		if (sb.lastIndexOf("</tr>\n") < sb.length() - 10)
 			sb.append("</tr>\n");
-		
+
 		sb.append("</tbody>\n");
 		sb.append("</table>\n");
 		sb.append("</td>\n");
@@ -408,10 +423,11 @@ public class Util {
 		sb.append("<tbody>\n");
 		sb.append("<tr class='panel_top'>\n");
 		sb.append("<td class='panel panel_top'>\n");
-		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"+(String)user+"</span></div>\n");
+		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"
+				+ (String) user + "</span></div>\n");
 		sb.append("</td>\n");
 		sb.append("<td class='svdPhotos svd_top'>\n");
-		sb.append("<p style='font-size:22px; color:#36474f; margin:0; margin-left:10px; '>Saved photos</p>\n");
+		sb.append("<p style='font-size:22px; color:#36474f; margin:0; margin-left:10px; '>Edit profile</p>\n");
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("<tr>\n");
@@ -445,21 +461,22 @@ public class Util {
 		return sb.toString();
 	}
 
-	public String getProfileSingle(Object user, String url, String date, String author,
-			String userIcon) {
-		
+	public String getProfileSingle(Object user, String url, String date,
+			String author, String userIcon) {
+
 		Query q = new Query("Image");
-		q.addFilter("url", Query.FilterOperator.EQUAL, (String)url);
-		q.addFilter("username", Query.FilterOperator.EQUAL, (String)user);
+		q.addFilter("url", Query.FilterOperator.EQUAL, (String) url);
+		q.addFilter("username", Query.FilterOperator.EQUAL, (String) user);
 		PreparedQuery pq = datastore.prepare(q);
 		Entity result = pq.asSingleEntity();
-		
+
 		sb.delete(0, sb.length());
 		sb.append("<table class='saved'>\n");
 		sb.append("<tbody>\n");
 		sb.append("<tr class='panel_top'>\n");
 		sb.append("<td class='panel panel_top'>\n");
-		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"+(String)user+"</span></div>\n");
+		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"
+				+ (String) user + "</span></div>\n");
 		sb.append("</td>\n");
 		sb.append("<td class='svdPhotos svd_top'>\n");
 		sb.append("<p style='font-size:22px; color:#36474f; margin:0; margin-left:10px; '>Saved photos</p>\n");
@@ -477,18 +494,26 @@ public class Util {
 		sb.append("<img class='i' src='" + result.getProperty("url") + "'>\n");
 		sb.append("<div class='info'>\n");
 		sb.append("<div class='instr'>\n");
-		sb.append("<div style='background-color: #13b9d5;'><a href='delete?img="+url+"&user="+user+"&lastPage=saved'><img src='https://dl.dropboxusercontent.com/s/65x9m5di52rkexw/delete.png?dl=0'></a></div>\n");
+		sb.append("<div style='background-color: #13b9d5;'><a href='delete?img="
+				+ url
+				+ "&user="
+				+ user
+				+ "&lastPage=saved'><img src='https://dl.dropboxusercontent.com/s/65x9m5di52rkexw/delete.png?dl=0'></a></div>\n");
 		sb.append("<div style='background-color: #36474f;'><a href='mail?img="
 				+ result.getProperty("url")
 				+ "'><img src='https://dl.dropboxusercontent.com/s/z860z31419vftje/mail_white.png?dl=0'></a></div>\n");
 		sb.append("<div style='background-color: #1ebba5;'><a href=''><img src='https://dl.dropboxusercontent.com/s/51x4uj6l99rcpsx/dropbox_white.png?dl=0'></a></div>\n");
 		sb.append("</div>\n");
 		sb.append("<div class='desc'>\n");
-		sb.append("<img src='"+result.getProperty("authorImg")+"'>\n");
+		sb.append("<img src='" + result.getProperty("authorImg") + "'>\n");
 		// sb.append("<img src='https://igcdn-photos-e-a.akamaihd.net/hphotos-ak-xfp1/t51.2885-19/10957242_547815902025140_73434984_a.jpg'>\n");
-		sb.append("<a class='un' href='foundlist?user="+result.getProperty("author")+"'><p>"+result.getProperty("author")+"</p></a>\n");
+		sb.append("<a class='un' href='foundlist?user="
+				+ result.getProperty("author") + "'><p>"
+				+ result.getProperty("author") + "</p></a>\n");
 		// sb.append("<a class='un' href=''><p>username</p></a>\n");
-		sb.append("<p class='pd'>"+parser.convertDate((String)result.getProperty("date"))+"</p>\n");
+		sb.append("<p class='pd'>"
+				+ parser.convertDate((String) result.getProperty("date"))
+				+ "</p>\n");
 		// sb.append("<p class='pd'>dd:mm:yyyy</p>\n");
 		sb.append("</div>\n");
 		sb.append("</div>\n");

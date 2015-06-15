@@ -15,6 +15,9 @@ public class SingleProfile extends HttpServlet{
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		HttpSession session = req.getSession(true);
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");
 		boolean loged = false;
 		if(session.getAttribute("loged")!=null)
 			loged = session.getAttribute("loged").equals("true");
@@ -23,7 +26,7 @@ public class SingleProfile extends HttpServlet{
 		PrintWriter out = resp.getWriter();
 		
 		out.println(util.headWithTitle("Photo view"));
-		out.println(util.StaticPart(loged, true));
+		out.println(util.StaticPart(username, loged, true));
 		String temp = util.getProfileSingle(session.getAttribute("username"), req.getParameter("img"), req.getParameter("date"), req.getParameter("author"), req.getParameter("userImg"));
 		out.println(temp);
 		out.println("</center>");

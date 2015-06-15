@@ -20,6 +20,9 @@ public class PhotoSeaServlet extends HttpServlet {
 				session.setAttribute("loged", "true");
 				session.setAttribute("username", "zimmersan");
 				
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");		
 		boolean loged = false;
 		if(session.getAttribute("loged")!=null)
 			loged = session.getAttribute("loged").equals("true");
