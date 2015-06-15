@@ -1,8 +1,8 @@
-<!-- Indices written at Sun, 14 Jun 2015 23:18:37 EEST -->
+<!-- Indices written at Mon, 15 Jun 2015 14:49:28 EEST -->
 
 <datastore-indexes>
 
-    <!-- Used 1 time in query history -->
+    <!-- Used 2 times in query history -->
     <datastore-index kind="Image" ancestor="false" source="auto">
         <property name="username" direction="asc"/>
         <property name="saved" direction="desc"/>

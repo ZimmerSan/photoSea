@@ -450,6 +450,7 @@ public class Util {
 		
 		Query q = new Query("Image");
 		q.addFilter("url", Query.FilterOperator.EQUAL, (String)url);
+		q.addFilter("username", Query.FilterOperator.EQUAL, (String)user);
 		PreparedQuery pq = datastore.prepare(q);
 		Entity result = pq.asSingleEntity();
 		
@@ -476,7 +477,7 @@ public class Util {
 		sb.append("<img class='i' src='" + result.getProperty("url") + "'>\n");
 		sb.append("<div class='info'>\n");
 		sb.append("<div class='instr'>\n");
-		sb.append("<div style='background-color: #13b9d5;'><a href=''><img src='https://dl.dropboxusercontent.com/s/65x9m5di52rkexw/delete.png?dl=0'></a></div>\n");
+		sb.append("<div style='background-color: #13b9d5;'><a href='delete?img="+url+"&user="+user+"&lastPage=saved'><img src='https://dl.dropboxusercontent.com/s/65x9m5di52rkexw/delete.png?dl=0'></a></div>\n");
 		sb.append("<div style='background-color: #36474f;'><a href='mail?img="
 				+ result.getProperty("url")
 				+ "'><img src='https://dl.dropboxusercontent.com/s/z860z31419vftje/mail_white.png?dl=0'></a></div>\n");
