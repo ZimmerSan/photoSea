@@ -16,10 +16,6 @@ public class PhotoSeaServlet extends HttpServlet {
 			throws IOException {
 		HttpSession session = req.getSession(true);
 		
-		//remove later
-				session.setAttribute("loged", "true");
-				session.setAttribute("username", "zimmersan");
-				
 		String username = null;
 		if(session.getAttribute("username")!=null)
 			username = (String)session.getAttribute("username");		

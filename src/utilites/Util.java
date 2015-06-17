@@ -16,7 +16,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public class Util {
 	private static DatastoreService datastore = DatastoreServiceFactory
 			.getDatastoreService();
-	private StringBuilder sb = new StringBuilder();
+	private static StringBuilder sb = new StringBuilder();
 	private Parser parser = new Parser();
 
 	public String headWithTitle(String title) {
@@ -140,13 +140,16 @@ public class Util {
 		return sb.toString();
 	}
 
-	public String getLoginForm() {
+	public String getLoginForm(String username) {
 		sb.delete(0, sb.toString().length());
 		sb.append("<div class='result-login result-working'>\n");
 		sb.append("<div class='form login-form'>\n");
 		sb.append("<p class='page_name' style='margin: 15px 0 20px 0;'>Sign in</p>\n");
-		sb.append("<form method='post' action='photosea'>\n");
-		sb.append("<input placeholder='Username' class='sgnin' type='text' size='40' name='login' /><br/>\n");
+		sb.append("<form method='post' action='sign-in'>\n");
+		sb.append("<input placeholder='Username' class='sgnin' type='text' size='40' name='login'");
+		if(username!=null)
+			sb.append("value='"+username+"'");
+		sb.append("/><br/>\n");
 		sb.append("<input placeholder='Password' class='sgnin' type='password' size='40' name='password' /><br/>\n");
 		sb.append("<a class='changeLogin' href='sign-up'>Create account</a>\n");
 		sb.append("<input class='gobtn' type='submit' value='sign in'/>\n");
@@ -161,7 +164,7 @@ public class Util {
 		sb.append("<div class='result-login result-working'>\n");
 		sb.append("<div class='form login-form'>\n");
 		sb.append("<p class='page_name' style='margin: 15px 0 20px 0;'>Create an account</p>\n");
-		sb.append("<form method='post' action='photosea'>\n");
+		sb.append("<form method='post' action='sign-up'>\n");
 		sb.append("<input placeholder='Username' class='sgnin' type='text' size='40' name='login' /><br/>\n");
 		sb.append("<input placeholder='Password' class='sgnin' type='password' size='40' name='password' /><br/>\n");
 		sb.append("<input placeholder='Confirm password*' class='sgnin' type='password' size='40' name='passwordconf' /><br/>\n");
