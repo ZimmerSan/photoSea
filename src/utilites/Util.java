@@ -42,8 +42,9 @@ public class Util {
 		sb.append("<span class='container'>\n");
 		sb.append("<center>\n");
 		sb.append("<div class='top_panel'>\n");
-		if(loged)
-			sb.append("<div class='username'><a href='saved'>"+user+"</a></div>\n");
+		if (loged)
+			sb.append("<div class='username'><a href='saved'>" + user
+					+ "</a></div>\n");
 		sb.append("<div class='logo_short'>\n");
 		sb.append("<span class='top_logo'><a href='/photosea' style='color:#fff; opacity'><img src='https://dl.dropboxusercontent.com/s/6difuypys7lrf7t/whiteLogo.png?dl=0' style='height:30px; width:30px; margin-top:4px;'></a></span>\n");
 		sb.append("</div>\n");
@@ -56,6 +57,12 @@ public class Util {
 		sb.append("<ul class='top-menu'>\n");
 		if (loged) {
 			// log out
+			sb.append("<li>\n");
+			sb.append("<form method=\"post\" action='photosea' class='logout'>\n");
+			sb.append("<input type='hidden' name='logout' value='true'>\n");
+			sb.append("<input type = 'submit' value='log out' class='logout_btn'>\n");
+			sb.append("</form>\n");
+			sb.append("</li>\n");
 		}
 		sb.append("<li><a href='#'>contacts</a></li>\n");
 		sb.append("<li><a href='#'>about service</a></li>\n");
@@ -69,13 +76,20 @@ public class Util {
 	}
 
 	public String getIndexStaticPart(boolean loged) {
+		sb.delete(0, sb.toString().length());
 		sb.append("<body style='height:100%; background-color:none;'>\n");
 		sb.append("<span class='container'>\n");
 		sb.append("<center>\n");
-		sb.append("<div class='top_panel' style='background:none;'>\n");
+		sb.append("<div class='top_panel' style='background:none; box-shadow:none;'>\n");
 		sb.append("<ul class='top-menu index_top_menu'>\n");
 		if (loged) {
 			// log out
+			sb.append("<li>\n");
+			sb.append("<form method=\"post\" action='photosea' class='logout'>\n");
+			sb.append("<input type='hidden' name='logout' value='true'>\n");
+			sb.append("<input type = 'submit' value='log out' class='logout_btn index'>\n");
+			sb.append("</form>\n");
+			sb.append("</li>\n");
 		}
 		sb.append("<li><a href='#'>contacts</a></li>\n");
 		sb.append("<li><a href='#'>about service</a></li>\n");
@@ -147,8 +161,8 @@ public class Util {
 		sb.append("<p class='page_name' style='margin: 15px 0 20px 0;'>Sign in</p>\n");
 		sb.append("<form method='post' action='sign-in'>\n");
 		sb.append("<input placeholder='Username' class='sgnin' type='text' size='40' name='login'");
-		if(username!=null)
-			sb.append("value='"+username+"'");
+		if (username != null)
+			sb.append("value='" + username + "'");
 		sb.append("/><br/>\n");
 		sb.append("<input placeholder='Password' class='sgnin' type='password' size='40' name='password' /><br/>\n");
 		sb.append("<a class='changeLogin' href='sign-up'>Create account</a>\n");
@@ -216,11 +230,11 @@ public class Util {
 		sb.delete(0, sb.toString().length());
 		sb.append("<div class='result-poly result-working'>\n");
 		sb.append("<div class='profile'>\n");
-		
-		sb.append("<img src='"+userImg+"'>\n");
+
+		sb.append("<img src='" + userImg + "'>\n");
 		sb.append("<p class='un'>" + user + "</p>\n");
 		sb.append("</div>\n");
-		
+
 		sb.append("<table style='width:100%;'>\n");
 		sb.append("<tbody style='position: relative;'>\n");
 		for (String[] img : URLs) {

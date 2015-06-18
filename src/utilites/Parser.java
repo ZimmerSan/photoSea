@@ -169,8 +169,8 @@ public class Parser {
 				String date=code.substring(lastIndex+findTimeCode.length(), lastIndex+nextIndex);
 				lastIndex = newString.indexOf(findCode);
 				newString = newString.substring(lastIndex);
-				nextIndex = newString.indexOf("\"}");
-				String res = newString.substring(findCode.length(), nextIndex);
+				nextIndex = newString.indexOf(".jpg");
+				String res = newString.substring(findCode.length(), nextIndex+4);
 				res = res.replace("\\", "");
 				String[] fin = {res, date};
 				list.add(fin);
