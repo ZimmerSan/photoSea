@@ -13,10 +13,17 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
 import utilites.User;
 import utilites.Util;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.geronimo.mail.util.Hex;
 
 public class RegisterForm extends HttpServlet {
+	
+	private static final String secretKey = "PRIE7$oG2uS-Yf17kEnUEpi5hvW/#AFo";
 	private Util util = new Util();
 	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+	
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -69,7 +76,8 @@ public class RegisterForm extends HttpServlet {
 		if ((login != null) && (password != null) && (confPass != null)
 				&& !(login.equals("")) && !(password.equals(""))
 				&& !(confPass.equals("")) && (password.equals(confPass))) {
-			User user = new User(login, password, drLog, drPass);
+			String hashPassword=hmacSha1(password, secretKey);
+			User user = new User(login, hashPassword, drLog, drPass);
 			datastore.put(user.getUserEntity());
 			out.write(util.getRegisterForm());
 			resp.sendRedirect("sign-in");
@@ -84,4 +92,26 @@ public class RegisterForm extends HttpServlet {
 			out.println("</html>");
 		}
 	}
+	public static String hmacSha1(String value, String key) {
+        try {
+            // Get an hmac_sha1 key from the raw key bytes
+            byte[] keyBytes = key.getBytes();           
+            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
+
+            // Get an hmac_sha1 Mac instance and initialize with the signing key
+            Mac mac = Mac.getInstance("HmacSHA1");
+            mac.init(signingKey);
+
+            // Compute the hmac on input data bytes
+            byte[] rawHmac = mac.doFinal(value.getBytes());
+
+            // Convert raw bytes to Hex
+            byte[] hexBytes = new Hex().encode(rawHmac);
+
+            //  Covert array of Hex bytes to a String
+            return new String(hexBytes, "UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -35,4 +35,31 @@ public class PhotoSeaServlet extends HttpServlet {
 		out.println("</body>");
 		out.println("</html>");
 	}
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		HttpSession session = req.getSession(true);
+		
+		String username = null;
+		if(session.getAttribute("username")!=null)
+			username = (String)session.getAttribute("username");		
+		boolean loged = false;
+		if(session.getAttribute("loged")!=null)
+			loged = session.getAttribute("loged").equals("true");
+		if ((req.getParameter("logout")!= null)&&(req.getParameter("logout").equals("true"))){
+			session.removeAttribute("loged");
+			resp.sendRedirect("/photosea");
+		}
+		resp.setContentType("text/html;charset=utf-8");
+		PrintWriter out = resp.getWriter();
+		out.println(util.headWithTitle("photoSea"));
+		
+		out.println(util.getIndexStaticPart(loged));
+		out.println(util.getSearchForm());
+
+		out.println("</center>");
+		out.println("</span>");
+		out.println("</body>");
+		out.println("</html>");
+	}
 }

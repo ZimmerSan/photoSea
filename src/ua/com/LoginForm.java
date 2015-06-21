@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Query;
 import utilites.Util;
 
 public class LoginForm extends HttpServlet {
+	private static final String secretKey = "PRIE7$oG2uS-Yf17kEnUEpi5hvW/#AFo";
+
 	private Util util = new Util();
 	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -70,9 +72,10 @@ public class LoginForm extends HttpServlet {
 		for (Entity result : pq.asIterable()) {
 			String l = (String) result.getProperty("username");
 			String p = (String) result.getProperty("password");
+			String hashP=RegisterForm.hmacSha1(password, secretKey);
 			if ((login != null) && (password != null) && !(login.equals(""))
 					&& !(password.equals("")) && (l.equals(login))
-					&& (p.equals(password))) {
+					&& (p.equals(hashP))) {
 				session.setAttribute("loged", "true");
 				session.setAttribute("username", l);
 				loged = true;
@@ -89,6 +92,7 @@ public class LoginForm extends HttpServlet {
 			out.println("</body>");
 			out.println("</html>");
 		}
+		
 	}
 
 	void deleteUser(String login, String password) {
