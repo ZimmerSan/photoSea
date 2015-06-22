@@ -25,7 +25,7 @@ public class EditProfile extends HttpServlet{
 	private Util util = new Util();
 	private static DatastoreService datastore = DatastoreServiceFactory
 			.getDatastoreService();
-	private static final String secretKey = "zimFsHRMndsldnJS-Yf17kEnUEpi5hvW/#AFo";
+	private static final String secretKey = "PRIE7$oG2uS-Yf17kEnUEpi5hvW/#AFo";
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		HttpSession session = req.getSession(true);
