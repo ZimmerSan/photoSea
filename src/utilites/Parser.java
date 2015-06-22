@@ -42,6 +42,7 @@ public class Parser {
 			nextIndex = newString.indexOf(end);
 			img=code.substring(lastIndex+findImg.length(), lastIndex+nextIndex+end.length());
 		}
+		img = img.replace("\\", "");
 		res[1] = img;
 		return res;
 	}

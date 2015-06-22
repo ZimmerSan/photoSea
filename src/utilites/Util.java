@@ -2,9 +2,17 @@ package utilites;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.servlet.http.HttpSession;
+
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheException;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -18,6 +26,22 @@ public class Util {
 			.getDatastoreService();
 	private static StringBuilder sb = new StringBuilder();
 	private Parser parser = new Parser();
+	private static Cache cache;
+	
+	public Util(){
+		if (cache == null)
+			initializeMemCache();
+		
+	}
+	
+	private void initializeMemCache(){
+		try {
+			CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+			cache = cacheFactory.createCache(Collections.emptyMap());
+		} catch (CacheException e) {
+			// ...
+		}
+	}
 
 	public String headWithTitle(String title) {
 		sb.delete(0, sb.toString().length());
@@ -225,6 +249,11 @@ public class Util {
 		Parser parser = new Parser();
 		String code = parser.parse(url);
 		ArrayList<String[]> URLs = parser.getAllURLs(code);
+		
+		// check wrong profile
+		if(URLs.size()==0)
+			return "";
+		
 		String userImg = parser.getAuthor(code)[1];
 		int i = 0;
 		sb.delete(0, sb.toString().length());
@@ -369,7 +398,7 @@ public class Util {
 		return res;
 	}
 
-	public String getSavedPhotos(Object username) throws IOException {
+/*	public String getSavedPhotos(Object username) throws IOException {
 
 		Query q = new Query("Image");
 		q.addSort("saved", SortDirection.DESCENDING);
@@ -432,9 +461,16 @@ public class Util {
 		sb.append("</tbody>\n");
 		sb.append("</table>\n");
 		return sb.toString();
-	}
+	}*/
 
-	public String getProfileEditor(Object user, String duser) {
+	public String getProfileEditor(Object user) {
+		Query q = new Query("User");
+		q.addFilter("username", Query.FilterOperator.EQUAL, (String) user);
+		PreparedQuery pq = datastore.prepare(q);
+		Entity result = pq.asSingleEntity();
+		
+		String duser = (String) result.getProperty("drLog");
+		
 		sb.delete(0, sb.length());
 		sb.append("<table class='saved'>\n");
 		sb.append("<tbody>\n");
@@ -535,6 +571,118 @@ public class Util {
 		sb.append("</div>\n");
 		sb.append("</div>\n");
 		sb.append("</div>\n");
+		sb.append("</td>\n");
+		sb.append("</tr>\n");
+		sb.append("</tbody>\n");
+		sb.append("</table>\n");
+		return sb.toString();
+	}
+
+	public void updateCache(String username, Entity ent, boolean add) {
+		if(!cache.containsKey(username)){
+			Query q = new Query("Image");
+			q.addSort("saved", SortDirection.ASCENDING);
+			q.addFilter("username", Query.FilterOperator.EQUAL, (String) username);
+			PreparedQuery pq = datastore.prepare(q);
+			Stack<Entity> st =  new Stack<Entity>();
+			for(Entity entity:pq.asIterable()){
+				st.push(entity);
+			}
+			cache.put(username, st);
+		} else if(add){
+			Stack<Entity> st = (Stack<Entity>) cache.get(username);
+			st.push(ent);
+			cache.remove(username);
+			cache.put(username, st);
+		} else if(!add){
+			Stack<Entity> st = (Stack<Entity>) cache.get(username);
+			st.remove(ent);
+			cache.remove(username);
+			cache.put(username, st);
+		}
+	}
+	
+	public String getSavedPhotos(String username) throws IOException {
+		int i = 0;
+
+		sb.delete(0, sb.length());
+		sb.append("<table class='saved'>\n");
+		sb.append("<tbody>\n");
+		sb.append("<tr class='panel_top'>\n");
+		sb.append("<td class='panel panel_top'>\n");
+		sb.append("<div class='profile_short'><img src='https://dl.dropboxusercontent.com/s/mxjjvabdqebptuz/profile.png?dl=0'> <span>"
+				+ (String) username + "</span></div>\n");
+		sb.append("</td>\n");
+		sb.append("<td class='svdPhotos svd_top'>\n");
+		sb.append("<p style='font-size:22px; color:#36474f; margin:0; margin-left:10px; '>Saved photos</p>\n");
+		sb.append("</td>\n");
+		sb.append("</tr>\n");
+		sb.append("<tr>\n");
+		sb.append("<td class='panel'>\n");
+		sb.append("<div class='btns'>\n");
+		sb.append("<div class='btn btn_active'><a href='saved'><img src='https://dl.dropboxusercontent.com/s/eaoshe03azv9ixa/folder.png?dl=0'> <span>Saved photos</span></a></div>\n");
+		sb.append("<div class='btn'><a href='editprofile'><img src='https://dl.dropboxusercontent.com/s/0fc530wkfuysz7b/gear.png?dl=0'> <span>Edit profile</span></a></div>\n");
+		sb.append("</div>\n");
+		sb.append("</td>\n");
+		sb.append("<td class='svdPhotos mainsvd'>\n");
+		sb.append("<table class='savedIn' style='width:100%;'>\n");
+		sb.append("<tbody style='position: relative;'>\n");
+
+		if(cache.containsKey(username)){
+			Stack<Entity> st = (Stack<Entity>) cache.get(username);
+			for(int pos=st.size()-1; pos>=0; pos--){
+				Entity result = st.get(pos);
+				if (i % 5 == 0) {
+					sb.append("<tr class='small-row saved'>\n");
+				}
+				String url = (String) result.getProperty("url");
+				sb.append("<td class='small-image'><span><center>\n");
+				sb.append("<a href='view?img=" + url + "'><img src='" + url
+						+ "'/></a>\n");
+				sb.append("</center></span></td>\n");
+				// sb.append("<div class='tool'><a href='' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
+				if (i % 5 == 4) {
+					sb.append("</tr>\n");
+				}
+				i++;
+			}
+		} else {
+			System.out.println("database");
+			Query q = new Query("Image");
+			q.addSort("saved", SortDirection.ASCENDING);
+			q.addFilter("username", Query.FilterOperator.EQUAL, (String) username);
+			PreparedQuery pq = datastore.prepare(q);
+			Stack<Entity> st =  new Stack<Entity>();
+			for (Entity result : pq.asIterable()) {
+				st.push(result);
+				if (i % 5 == 0) {
+					sb.append("<tr class='small-row saved'>\n");
+				}
+				String url = (String) result.getProperty("url");
+				sb.append("<td class='small-image'><span><center>\n");
+				sb.append("<a href='view?img=" + url + "'><img src='" + url
+						+ "'/></a>\n");
+				sb.append("</center></span></td>\n");
+				// sb.append("<div class='tool'><a href='' title='Save to my profile'><img src='https://dl.dropboxusercontent.com/s/yz1x9hi7b8jdo70/save-img2.png'></a></div>");
+				if (i % 5 == 4) {
+					sb.append("</tr>\n");
+				}
+				i++;
+			}
+			cache.put(username, st);
+		}
+		
+		if (sb.lastIndexOf("</tr>\n") < sb.length() - 10)
+			sb.append("</tr>\n");
+
+		sb.append("</tbody>\n");
+		sb.append("</table>\n");
+		sb.append("</td>\n");
+		sb.append("</tr>\n");
+		sb.append("<tr class='paginator'>\n");
+		sb.append("<td class='panel'></td>\n");
+		sb.append("<td class='svdPhotos'>\n");
+		sb.append("<div class='paginator'><a href=''>First page</a><span>  </span><a href=''>Next page >></a></div>\n");
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("</tbody>\n");
