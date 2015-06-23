@@ -10,9 +10,14 @@ import javax.servlet.http.HttpSession;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.QueryResultIterable;
 
 import utilites.User;
 import utilites.Util;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -48,6 +53,7 @@ public class RegisterForm extends HttpServlet {
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		int loginAlreadyUsed=0;
 		// Session
 		HttpSession session = req.getSession(true);
 		String username = null;
@@ -73,11 +79,23 @@ public class RegisterForm extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		out.write("<!DOCTYPE html>");
 		out.write("<html><head><title>User</title></head><body>");
-		if ((login != null) && (password != null) && (confPass != null)
+		Query q = new Query("User");
+		PreparedQuery pq = datastore.prepare(q);
+		QueryResultIterable<Entity> results=pq.asQueryResultIterable();
+		String check=null;
+		for (Entity entity:results) {
+			String l = (String) entity.getProperty("username");
+			if(l.equals(req.getParameter("login"))){
+				check=check+l;
+				break;
+			}
+		}
+		if ((check==null)&&(login != null) && (password != null) && (confPass != null)
 				&& !(login.equals("")) && !(password.equals(""))
 				&& !(confPass.equals("")) && (password.equals(confPass))) {
 			String hashPassword=hmacSha1(password, secretKey);
-			User user = new User(login, hashPassword, drLog, drPass);
+			String hashDrPass=hmacSha1(drPass, secretKey);
+			User user = new User(login, hashPassword, drLog, hashDrPass);
 			datastore.put(user.getUserEntity());
 			out.write(util.getRegisterForm());
 			resp.sendRedirect("sign-in");
@@ -113,5 +131,19 @@ public class RegisterForm extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        
+       
     }
+//	public User check(String username){
+//		Query q = new Query("User");
+//		PreparedQuery pq = datastore.prepare(q);
+//		QueryResultIterable<Entity> results=pq.asQueryResultIterable();
+//		for(Entity entity:results){
+//			if(entity.getProperty("username").equals(username)){
+//				return new User((String) entity.getProperty("username"),(String) entity.getProperty("password"),(String) entity.getProperty("drLog"),(String) entity.getProperty("drPass"));
+//			}
+//		}
+//		return null;
+//	}
+//	
 }
