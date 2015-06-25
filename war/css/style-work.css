@@ -836,3 +836,7 @@ form.logout .index {
 form.logout .logout_btn:hover {
 	color: #fa5a20;
 }
+
+.result-single  img{
+	max-width:612px;
+}

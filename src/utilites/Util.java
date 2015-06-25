@@ -206,8 +206,8 @@ public class Util {
 		sb.append("<input placeholder='Username' class='sgnin' type='text' size='40' name='login' /><br/>\n");
 		sb.append("<input placeholder='Password' class='sgnin' type='password' size='40' name='password' /><br/>\n");
 		sb.append("<input placeholder='Confirm password*' class='sgnin' type='password' size='40' name='passwordconf' /><br/>\n");
-		sb.append("<input placeholder='Dropbox username' class='sgnin' type='text' size='40' name='drpname' /><br/>\n");
-		sb.append("<input placeholder='Dropbox password' class='sgnin' type='password' size='40' name='drppass' /><br/>\n");
+		//sb.append("<input placeholder='Dropbox username' class='sgnin' type='text' size='40' name='drpname' /><br/>\n");
+		//sb.append("<input placeholder='Dropbox password' class='sgnin' type='password' size='40' name='drppass' /><br/>\n");
 		sb.append("<a class='changeLogin' href='sign-in'>Already registered</a>\n");
 		sb.append("<input class='gobtn' type='submit' value='sign up'/>\n");
 		sb.append("</form>\n");
@@ -325,7 +325,7 @@ public class Util {
 		sb.append("<div><a href='mail?img="
 				+ info.get("url")
 				+ "'><img src='https://dl.dropboxusercontent.com/s/c5vdkdqm0mt8msl/mail.png?dl=0'></a></div>\n");
-		sb.append("<div><a href=''><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png?dl=0'></a></div>\n");
+		// sb.append("<div><a href=''><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png?dl=0'></a></div>\n");
 		sb.append("</div>\n");
 		sb.append("<div class='desc'>\n");
 		sb.append("<img src='" + info.get("authorImg") + "'>\n");
@@ -360,7 +360,7 @@ public class Util {
 		sb.append("<div><a href='mail?img="
 				+ img
 				+ "'><img src='https://dl.dropboxusercontent.com/s/c5vdkdqm0mt8msl/mail.png?dl=0'></a></div>\n");
-		sb.append("<div><a href=''><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png?dl=0'></a></div>\n");
+		// sb.append("<div><a href=''><img src='https://dl.dropboxusercontent.com/s/67ouce7y2gh6f8u/dropbox.png?dl=0'></a></div>\n");
 		sb.append("</div>\n");
 		sb.append("<div class='desc'>\n");
 		sb.append("<img src='" + userImg + "'>\n");
@@ -555,7 +555,7 @@ public class Util {
 		sb.append("<div style='background-color: #36474f;'><a href='mail?img="
 				+ result.getProperty("url")
 				+ "'><img src='https://dl.dropboxusercontent.com/s/z860z31419vftje/mail_white.png?dl=0'></a></div>\n");
-		sb.append("<div style='background-color: #1ebba5;'><a href=''><img src='https://dl.dropboxusercontent.com/s/51x4uj6l99rcpsx/dropbox_white.png?dl=0'></a></div>\n");
+		sb.append("<div style='background-color: #1ebba5; width:100px; height:100px;'></div>\n");
 		sb.append("</div>\n");
 		sb.append("<div class='desc'>\n");
 		sb.append("<img src='" + result.getProperty("authorImg") + "'>\n");
@@ -687,6 +687,19 @@ public class Util {
 		sb.append("</tr>\n");
 		sb.append("</tbody>\n");
 		sb.append("</table>\n");
+		return sb.toString();
+	}
+	
+	public String getDropboxForm(String authorizeUrl, String filename){
+		sb.delete(0, sb.length());
+		sb.append("<div class='dbx'>");
+		sb.append("1. Authorize: Go to URL and click Allow : "+ authorizeUrl);
+		sb.append("2. Auth Code: Copy authorization code and input here ");
+		sb.append("<form method='post'>");
+		sb.append("<input name='authcode' placeholder='Your code:'>");
+		sb.append("<input name='filename' type='hidden' value='"+filename+"'>");
+		sb.append("</form>");
+		sb.append("</div>");
 		return sb.toString();
 	}
 }
