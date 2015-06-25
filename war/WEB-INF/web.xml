@@ -50,6 +50,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>mailSend</servlet-name>
+		<servlet-class>ua.com.MailSend</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mailSend</servlet-name>
+		<url-pattern>/mailSend</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>Image</servlet-name>
 		<servlet-class>ua.com.Image</servlet-class>
 	</servlet>

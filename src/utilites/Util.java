@@ -132,13 +132,13 @@ public class Util {
 	public String getMailForm(String img) {
 		sb.delete(0, sb.toString().length());
 		sb.append("<div class='result result-working'>\n");
-		sb.append("<form method='get' class='form mailform'>\n");
+		sb.append("<form method='post' class='form mailform'>\n");
 		sb.append("<table style='width:100%; padding:0 50px;x' >\n");
 		sb.append("<tbody style='position: relative; '>\n");
 		sb.append("<p style='text-align: left; margin-left:50px; font-size: 24px; color:#36474f;'>Send by mail</p>\n");
 		sb.append("<tr style='float:left; margin-bottom:25px;'>\n");
 		sb.append("<td>\n");
-		sb.append("<p>From: <span style='opacity: 0.5;'>example@gmail.com</span></p>\n");
+		sb.append("<p>From: <span style='opacity: 0.5;'>photoseaapp@gmail.com</span></p>\n");
 		sb.append("<span>To: </span><input class='rec_mail' name='rec_mail' placeholder='reciever's mail'/>\n");
 		sb.append("</td>\n");
 		sb.append("</tr>\n");

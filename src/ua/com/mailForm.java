@@ -33,4 +33,21 @@ public class MailForm extends HttpServlet {
 		out.println("</body>");
 		out.println("</html>");
 	}
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		HttpSession session = req.getSession(true);
+		String name = req.getParameter("rec_mail");
+		String text = req.getParameter("mess_text");
+		String im = req.getParameter("img");
+		if(name!=null&&!name.equals("")){
+			if(text!=null) MailSend.mailSend(req,resp,name,text,im);
+			else MailSend.mailSend(req,resp,req.getParameter("rec_mail"),"",req.getParameter("img"));
+		}else{
+			resp.getWriter().println("Please enter adress of reciever");
+			doGet(req,resp);
+			
+		}
+			
+			
+	}
 }
